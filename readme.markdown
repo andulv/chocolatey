@@ -17,7 +17,7 @@ For ordinary packages, this is what happens during install:
   3. Shims are created for any .exe file found in package. (unless .ignore file is present)
   (If any of above fails, package is moved to lib-bad)
 
-When a package has the extension .run this happens:
+When a package has the extension '.run' this happens instead:
   1. The package is downloaded to lib-run
   2. tools\chocolateyinstall.ps1 script is executed
   3. Package is removed from lib-run
