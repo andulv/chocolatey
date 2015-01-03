@@ -21,6 +21,16 @@ When a package has the extension '.run' this happens instead:
   1. The package is downloaded to lib-run
   2. tools\chocolateyinstall.ps1 script is executed
   3. Package is removed from lib-run
-   
 
+One of the main advantages of .run packages as part of Chocolatey is dependencies.
+.run packages can depend on ordinary packages (or other .run packages). 
+Ordinary packages can depend on .run packages.
+
+Scenario 1 -  AdvancedScriptPackage.run
+  Depends on scriptcs. 
+  Includes AdvancedScript.cs in tools folder
+  chocolateyinstall.ps1 does nothing but invoke scriptcs AdvancedScript.cs
   
+Scenario 2 - CustomBusinessApplication (ordinary package)
+  Depends on EnsureComputerMeetsCorporateStandards.run
+  Depends on CleanUpOldLegacyApplication.run
