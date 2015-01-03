@@ -1,20 +1,26 @@
-Chocolatey NuGet (like apt-get, but for Windows) [![](http://img.shields.io/gittip/Chocolatey.svg)](https://www.gittip.com/Chocolatey/) [![](http://img.shields.io/chocolatey/dt/chocolatey.svg)](https://chocolatey.org/packages/chocolatey) [![](http://img.shields.io/chocolatey/v/chocolatey.svg)](https://chocolatey.org/packages/chocolatey)  [![Build status](https://ci.appveyor.com/api/projects/status/jj9h1tobakhpbiwx/branch/master)](https://ci.appveyor.com/project/ferventcoder/chocolatey/branch/master)  [![](http://img.shields.io/teamcity/codebetter/bt802.svg)](http://teamcity.codebetter.com/viewType.html?buildTypeId=bt802)
-=======
-[![Chocolatey Logo](https://github.com/chocolatey/chocolatey/raw/master/docs/logo/chocolateyicon.gif "Chocolatey")](http://chocolatey.org/)
+Fork of https://github.com/chocolatey/chocolatey
 
-# WEBSITE
+The intention of this fork is is to add features / do changes that are needed for my companys use of Chocolatey.
 
-[Chocolatey.org](http://chocolatey.org/)
+Hopefully some of these changes will make it to master.
 
-# LICENSE
-Apache 2.0 - see docs/legal (just LEGAL in the zip folder)
+First (and for the time only) feature is this:
 
-# INFO
-##Please see the [wiki](https://github.com/chocolatey/chocolatey/wiki)
+Add support for .run packages.
 
-# SOURCE REQUIREMENTS
-* .NET Framework 4.0
-* PowerShell 2.0+
+.run packages are pure scripts. The packages are not installed to lib\ folder, but in every other aspects they are identical to ordinary packages.
 
-# CREDITS
-See [docs/legal/CREDITS](https://github.com/chocolatey/chocolatey/raw/master/docs/legal/CREDITS) (just LEGAL/Credits in the zip folder)  
+For ordinary packages, this is what happens during install:
+  1. The package is downloaded to lib
+  2. tools\chocolateyinstall.ps1 script is executed.
+     This script will usually (but not always) download installer application from web, and execute it with silent args.
+  3. Shims are created for any .exe file found in package. (unless .ignore file is present)
+  (If any of above fails, package is moved to lib-bad)
+
+When a package has the extension .run this happens:
+  1. The package is downloaded to lib-run
+  2. tools\chocolateyinstall.ps1 script is executed
+  3. Package is removed from lib-run
+   
+
+  
