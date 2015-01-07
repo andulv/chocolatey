@@ -66,6 +66,10 @@ param(
         $params += '-Source', "$srcArgs" #already quoted from Get-SourceArguments
       }
     }
+    
+    if($nugetConfigFile -notlike ''){
+      $params = $params + " -ConfigFile $nugetConfigFile";
+    }
 
     Write-Debug "Executing command [`"$nugetExe`" $params]"
     $global:packageList = @{}

@@ -18,6 +18,11 @@ param(
   if ($prerelease -eq $true) {
     $packageArgs = $packageArgs + " -Prerelease";
   }
+  
+  if($nugetConfigFile -notlike ''){
+    $packageArgs = $packageArgs + " -ConfigFile $nugetConfigFile";
+  }
+  
   $logFile = Join-Path $nugetChocolateyPath 'install.log'
   $errorLogFile = Join-Path $nugetChocolateyPath 'error.log'
   Write-Debug "Calling `'$nugetExe`' $packageArgs"

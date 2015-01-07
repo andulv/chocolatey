@@ -18,6 +18,8 @@ function Get-WebFile {
 param(
   $url = '', #(Read-Host "The URL to download"),
   $fileName = $null,
+  $userName = '',
+  $passWord = '',
   $userAgent = 'chocolatey command line',
   [switch]$Passthru,
   [switch]$quiet
@@ -25,7 +27,16 @@ param(
   Write-Debug "Running 'Get-WebFile' for $fileName with url:`'$url`', userAgent: `'$userAgent`' ";
   #if ($url -eq '' return)
   $req = [System.Net.HttpWebRequest]::Create($url);
+  
   $defaultCreds = [System.Net.CredentialCache]::DefaultCredentials
+ 
+  Write-Debug "Get-WebFile userName: $userName";
+  Write-Debug "Get-WebFile passWord: $passWord";
+  if($userName -ne '' -and $passWord -ne '') {
+      Write-Debug "Creating credentials parameters ";
+      $defaultCreds = new-object System.Net.NetworkCredential($userName, $passWord); 
+  }   
+     
   if ($defaultCreds -ne $null) {
     $req.Credentials = $defaultCreds
   }

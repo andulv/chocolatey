@@ -54,11 +54,13 @@ $runLibPath = Join-Path $nuGetPath 'lib-run'
 $extensionsPath = Join-Path $nugetPath 'extensions'
 $chocInstallVariableName = "ChocolateyInstall"
 $nugetExe = Join-Path $nugetChocolateyPath 'nuget.exe'
+$nugetConfigFile = Join-Path $nugetChocolateyPath 'nuget.config'
 $7zip = Join-Path $nugetChocolateyPath 'tools\7za.exe'
 $ShimGen = Join-Path $nugetChocolateyPath 'tools\shimgen.exe'
 $checksumExe = Join-Path $nugetChocolateyPath 'tools\checksum.exe'
 $h1 = '====================================================='
 $h2 = '-------------------------'
+
 $globalConfig = ''
 $userConfig = ''
 $env:ChocolateyEnvironmentDebug = 'false'
@@ -169,6 +171,7 @@ $env:chocolateyPackageParameters = $packageParameters
 
 $chocolateyErrored = $false
 $badPackages = ''
+
 
 #todo: This does not catch package names that come later
 foreach ($packageName in $packageNames) {

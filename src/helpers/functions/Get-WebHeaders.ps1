@@ -1,6 +1,8 @@
 function Get-WebHeaders {
 param(
   $url = '',
+  $userName = '',
+  $passWord = '',  
   $userAgent = 'chocolatey command line'
 )
   Write-Debug "Running 'Get-WebHeaders' with url:`'$url`', userAgent: `'$userAgent`'";
@@ -11,8 +13,18 @@ param(
   if ($defaultCreds -ne $null) {
     $request.Credentials = $defaultCreds
   }
+  
+  if($userName -ne '' -and $passWord -ne '') {
+    Write-Debug "Get-WebHeaders: Creating credentials parameters ";
+    $defaultCreds = new-object System.Net.NetworkCredential($userName, $passWord); 
+  }   
 
   #$request.Method = "HEAD"
+  
+  if ($defaultCreds -ne $null) {
+    $request.Credentials = $defaultCreds
+  }
+  
   # check if a proxy is required
   $client = New-Object System.Net.WebClient
   if ($defaultCreds -ne $null) {

@@ -86,9 +86,37 @@ param(
   }
 
   $headers = @{}
+  $pkgsrcUsername='';
+  $pkgsrcPassword='';
+  
+  if($url.ToLower().StartsWith("pkgsrc:")) {
+    #Source is specified like this pkgsrc:sourcename/path/morepath/fileInstaller.msi"
+    Write-Debug "pkgsrc: URL detected. Parsing and replacing to create absolute URL. ";
+    
+    $urlPkgsrcPart = $url.Split("/")[0];
+    $nugetSourceName = $urlPkgsrcPart.Split(":")[1]; 
+
+    $nugetConfigFile = Join-Path "$env:ChocolateyInstall" 'chocolateyinstall\NuGet.Config'
+    Write-Debug "nugetConfigFile: $nugetConfigFile";
+    [xml] $xdoc = get-content $nugetConfigFile;
+    $pkgsrcRootUrl = $xdoc.SelectSingleNode("/configuration/packageSources/add[@key='$nugetSourceName']").getAttribute("value");
+    $url=$url.Replace($urlPkgsrcPart,$pkgsrcRootUrl);
+    
+    $pkgsrcUsernameNode = $xdoc.SelectSingleNode("/configuration/packageSourceCredentials/$nugetSourceName/add[@key='Username']");
+    $pkgsrcPasswordNode = $xdoc.SelectSingleNode("/configuration/packageSourceCredentials/$nugetSourceName/add[@key='ClearTextPassword']");
+       
+    if($pkgsrcUsernameNode -ne $null -and $pkgsrcPasswordNode -ne $null) {
+        Write-Debug "Setting credentials from nuget.config ";
+        $pkgsrcUsername = $pkgsrcUsernameNode.getAttribute("value");
+        $pkgsrcPassword = $pkgsrcPasswordNode.getAttribute("value");
+    }      
+    Write-Debug "URL is changed to: $url";
+  }         
+ 
+  
   if ($url.StartsWith('http')) {
     try {
-      $headers = Get-WebHeaders $url
+      $headers = Get-WebHeaders $url $pkgsrcUsername $pkgsrcPassword 
     } catch {
       if ($host.Version -lt (new-object 'Version' 3,0)) {
         Write-Debug "Converting Security Protocol to SSL3 only for Powershell v2"
@@ -114,7 +142,7 @@ param(
     if ($needsDownload) {
       Write-Host "Downloading $packageName $bitPackage bit
   from `'$url`'"
-      Get-WebFile $url $fileFullPath
+      Get-WebFile $url $fileFullPath $pkgsrcUsername $pkgsrcPassword
     }
   } elseif ($url.StartsWith('ftp')) {
     Write-Host "Ftp-ing $packageName
